@@ -1,7 +1,11 @@
-image: docker:latest
+image: node:20
 
 services:
   - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
 
 cache:
   paths:
@@ -10,12 +14,16 @@ cache:
 stages:
   - install
   - build
+  - dockerize
   - deploy
+
+before_script:
+  - npm ci
 
 install_dependencies:
   stage: install
   script:
-    - npm ci
+    - echo "Dependencies installed"
 
 build_app:
   stage: build
@@ -27,32 +35,21 @@ build_app:
       - public
       - package.json
       - next.config.js
-      - next-i18next.config.js
-      - tsconfig.json
   only:
     - develop
 
 build_docker:
-  stage: build
+  stage: dockerize
   script:
     - docker build -t idrama-web:${CI_COMMIT_SHORT_SHA} .
-    # - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-    # - docker tag idrama-web:${CI_COMMIT_SHORT_SHA} $CI_REGISTRY_IMAGE:idrama-web-${CI_COMMIT_SHORT_SHA}
-    # - docker push $CI_REGISTRY_IMAGE:idrama-web-${CI_COMMIT_SHORT_SHA}
   only:
     - develop
 
 deploy:
   stage: deploy
   script:
-    - docker run -d --name idrama-web -p 3000:3000 idrama-web:${CI_COMMIT_SHORT_SHA}
+    - echo "Deploy step: only run on self-hosted runner"
+    # - ssh user@server "docker stop idrama-web && docker rm idrama-web"
+    # - ssh user@server "docker run -d --name idrama-web -p 3000:3000 idrama-web:${CI_COMMIT_SHORT_SHA}"
   only:
     - main
-
-before_script:
-  - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  - export NVM_DIR="$HOME/.nvm"
-  - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  - nvm install 20
-  - nvm use 20
-  - node -v  
