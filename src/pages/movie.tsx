@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "next-i18next";
 import ImageIcon from "@/components/common/Icon";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useMediaQuery } from "@mantine/hooks";
 
 declare global {
   interface Window {
@@ -90,6 +91,7 @@ export default function MoviePage() {
   const { t } = useTranslation("common");
   const movieId = searchParams.get("movie") || "";
   const language = searchParams.get("language") || "en";
+  const isMd = useMediaQuery("(min-width: 768px)");
 
   // get params of deeplink
   const p0 = searchParams.get("p0");
@@ -204,7 +206,7 @@ export default function MoviePage() {
             src={movie.posterUrl}
             alt="poster-bg"
             className="absolute inset-0 w-full h-full object-cover blur-lg scale-110 z-0"
-            style={{ filter: "blur(10px)", objectFit: "cover" }}
+            style={{ filter: "blur(6px)", objectFit: "cover" }}
           />
         )}
         <div className="absolute inset-0 bg-black/70 z-10" />
@@ -216,45 +218,94 @@ export default function MoviePage() {
           ) : isError || !movie ? (
             <Text className="text-white text-center">{t("noMovie")}</Text>
           ) : (
-            <Paper className=" text-white ">
-              <div className="flex flex-col items-center px-4 pb-28">
-                <div className="flex flex-row gap-2 py-5">
-                  <ImageIcon src="/images/idrama-icon.svg" size={36} />
-                  <Text className="text-white text-2xl font-bold">iDrama</Text>
-                </div>
-                <div className="relative flex items-center justify-center">
-                  <Image
-                    src={movie.posterUrl}
-                    alt="poster"
-                    className="md:w-2/3 border-2 border-white rounded-2xl mb-4 w-4/5"
-                  />
-                  {movie && (
-                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                      <ImageIcon src="/images/play-icon.svg" size={64} />
+            <Paper className="text-white">
+              {isMd ? (
+                <div className="flex flex-col items-center px-4 pb-10">
+                  <div className="flex flex-row gap-2 py-5 mb-10">
+                    <ImageIcon src="/images/idrama-icon.svg" size={36} />
+                    <Text className="text-white text-2xl font-bold">
+                      iDrama AI Short Videos
+                    </Text>
+                  </div>
+                  <div className="flex flex-row gap-4 items-center justify-center">
+                    <div className="relative flex items-center justify-center">
+                      <Image
+                        src={movie.posterUrl}
+                        alt="poster"
+                        className="md:w-2/3 border-2 border-white rounded-2xl mb-4 max-w-[30vw]"
+                      />
+                      {movie && (
+                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                          <ImageIcon src="/images/play-icon.svg" size={64} />
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <div className="flex flex-col items-start justify-center w-[35%] gap-6 text-left">
+                      <Text className="text-left my-4 text-xl font-bold text-white">
+                        {movie.title}
+                      </Text>
+                      <Text className="font-thin text-gray-200 text-left line-clamp-6">
+                        {movie.description}
+                      </Text>
+                      <Button
+                        fullWidth
+                        className="cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
+                        style={{
+                          background:
+                            "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
+                          maxWidth: "calc(100% - 25px)",
+                        }}
+                        onClick={copyToClipBoard}
+                      >
+                        {t("continueWatching")}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <Text className="text-center my-4 text-xl font-bold text-white">
-                  {movie.title}
-                </Text>
-                <Text className="font-thin text-gray-200 text-center">
-                  {movie.description}
-                </Text>
-              </div>
-              <Button
-                fullWidth
-                size="lg"
-                radius="xl"
-                className="fixed bottom-10 left-1/2 -translate-x-1/2 cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
-                style={{
-                  background:
-                    "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
-                  maxWidth: "calc(100% - 25px)",
-                }}
-                onClick={copyToClipBoard}
-              >
-                {t("continueWatching")}
-              </Button>
+              ) : (
+                <div className="flex flex-col items-center px-4 pb-28">
+                  <div className="flex flex-row gap-2 py-5">
+                    <ImageIcon src="/images/idrama-icon.svg" size={36} />
+                    <Text className="text-white text-2xl font-bold">
+                      iDrama
+                    </Text>
+                  </div>
+                  <div className="relative flex items-center justify-center">
+                    <Image
+                      src={movie.posterUrl}
+                      alt="poster"
+                      className="md:w-2/3 border-2 border-white rounded-2xl mb-4 w-4/5 "
+                    />
+                    {movie && (
+                      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                        <ImageIcon src="/images/play-icon.svg" size={64} />
+                      </div>
+                    )}
+                  </div>
+                  <Text className="text-center my-4 text-xl font-bold text-white">
+                    {movie.title}
+                  </Text>
+                  <Text className="font-thin text-gray-200 text-center ">
+                    {movie.description}
+                  </Text>
+                </div>
+              )}
+              {!isMd && (
+                <Button
+                  fullWidth
+                  size="lg"
+                  radius="xl"
+                  className="fixed bottom-10 left-1/2 -translate-x-1/2 cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
+                    maxWidth: "calc(100% - 25px)",
+                  }}
+                  onClick={copyToClipBoard}
+                >
+                  {t("continueWatching")}
+                </Button>
+              )}
             </Paper>
           )}
         </Container>
