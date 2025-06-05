@@ -1,0 +1,272 @@
+"use client";
+import { useEffect, useState, useCallback } from "react";
+import Head from "next/head";
+import {
+  Button,
+  Container,
+  Paper,
+  Group,
+  Image,
+  Text,
+  Loader,
+} from "@mantine/core";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "next-i18next";
+import ImageIcon from "@/components/common/Icon";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+declare global {
+  interface Window {
+    fbq?: any;
+    _fbq?: any;
+    buildURL?: any;
+  }
+}
+
+// fetch movie
+const fetchMovie = async (movieId: string, languageCode: string) => {
+  const res = await fetch(
+    `https://short-movie.begamob.com/api/v2/movies/${movieId}/field`,
+    {
+      headers: {
+        accept: "*/*",
+        "language-code": languageCode,
+      },
+    }
+  );
+  if (!res.ok) throw new Error("Network response was not ok");
+  const result = await res.json();
+  return result.data;
+};
+
+// build deeplink URL
+function buildURL(
+  p0: string | null,
+  p1: string | null,
+  p2: string | null,
+  p3: string | null,
+  p4: string | null,
+  p5: string | null,
+  p6: string | null,
+  fbclid: string | null,
+  fbpid: string | null
+) {
+  if (!p0) return null;
+  const tracker_token = p0;
+  const campaign = p1 || p2 ? `${p1 || ""}(${p2 || ""})` : "";
+  const adgroup = p3 || p4 ? `${p3 || ""}(${p4 || ""})` : "";
+  const creative = p5 || p6 ? `${p5 || ""}(${p6 || ""})` : "";
+  fbclid = fbclid || "";
+  fbpid = fbpid || "";
+  const params: Record<string, string> = {
+    campaign,
+    adgroup,
+    creative,
+    fbclid,
+    fbpid,
+  };
+  const newURL =
+    "https://app.adjust.com/" +
+    tracker_token +
+    "?" +
+    Object.keys(params)
+      .map((key) => key + "=" + encodeURIComponent(params[key]))
+      .join("&");
+  return newURL;
+}
+
+// get fbpid from cookie
+function getFbPid() {
+  if (typeof document === "undefined") return null;
+  const fbPid = document.cookie.match(/(^|;) ?_fbp=([^;]*)(;|$)/);
+  return fbPid ? fbPid[2] : null;
+}
+
+export default function MoviePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { t } = useTranslation("common");
+  const movieId = searchParams.get("movie") || "";
+  const language = searchParams.get("language") || "en";
+
+  // get params of deeplink
+  const p0 = searchParams.get("p0");
+  const p1 = searchParams.get("p1");
+  const p2 = searchParams.get("p2");
+  const p3 = searchParams.get("p3");
+  const p4 = searchParams.get("p4");
+  const p5 = searchParams.get("p5");
+  const p6 = searchParams.get("p6");
+  const fbclid = searchParams.get("fbclid");
+
+  // Handler deeplink click
+  const handleDeeplink = useCallback(() => {
+    const fbpid = getFbPid();
+    const deeplink = buildURL(p0, p1, p2, p3, p4, p5, p6, fbclid, fbpid);
+    if (deeplink) {
+      window.location.href = deeplink;
+    }
+  }, [p0, p1, p2, p3, p4, p5, p6, fbclid]);
+
+  useEffect(() => {
+    if (!p0) return;
+    // listen click on all page
+    const onClick = () => handleDeeplink();
+    window.addEventListener("click", onClick);
+    return () => {
+      window.removeEventListener("click", onClick);
+    };
+  }, [p0, handleDeeplink]);
+
+  const {
+    data: movie,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["movie", movieId, language],
+    queryFn: () => fetchMovie(movieId, language),
+    enabled: !!movieId && !!language,
+  });
+
+  const copyToClipBoard = () => {
+    const episodeIndex = searchParams.get("episode") || "";
+    navigator.clipboard.writeText(
+      JSON.stringify({
+        movie_id: +movieId,
+        episode: +episodeIndex,
+        language: language,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (router.locale !== language) {
+      router.replace(router.asPath, undefined, { locale: language });
+    }
+  }, [language, router]);
+
+  const supportedLocales = [
+    "en",
+    "es",
+    "ja",
+    "in",
+    "fr",
+    "pt",
+    "th",
+    "de",
+    "ko",
+    "tr",
+  ];
+
+  useEffect(() => {
+    const language = searchParams.get("language");
+    if (
+      language &&
+      supportedLocales.includes(language) &&
+      router.locale !== language
+    ) {
+      const params = searchParams.toString();
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: { ...router.query },
+        },
+        undefined,
+        { locale: language }
+      );
+    }
+  }, [searchParams, router.locale]);
+
+  return (
+    <>
+      <Head>
+        <title>Idrama AI short video</title>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="/images/idrama-icon.svg" />
+        <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+        {/* Meta Pixel noscript */}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src="https://www.facebook.com/tr?id=645333511354667&ev=PageView&noscript=1"
+            alt="fb-pixel"
+          />
+        </noscript>
+      </Head>
+      <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        {movie && (
+          <Image
+            src={movie.posterUrl}
+            alt="poster-bg"
+            className="absolute inset-0 w-full h-full object-cover blur-lg scale-110 z-0"
+            style={{ filter: "blur(10px)", objectFit: "cover" }}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/70 z-10" />
+        <Container size="sm" px="md" className="w-full relative z-20">
+          {isLoading ? (
+            <Group justify="center" style={{ minHeight: "60vh" }}>
+              <Loader color="orange" size="xl" />
+            </Group>
+          ) : isError || !movie ? (
+            <Text className="text-white text-center">{t("noMovie")}</Text>
+          ) : (
+            <Paper className=" text-white ">
+              <div className="flex flex-col items-center px-4 pb-28">
+                <div className="flex flex-row gap-2 py-5">
+                  <ImageIcon src="/images/idrama-icon.svg" size={36} />
+                  <Text className="text-white text-2xl font-bold">iDrama</Text>
+                </div>
+                <div className="relative flex items-center justify-center">
+                  <Image
+                    src={movie.posterUrl}
+                    alt="poster"
+                    className="md:w-2/3 border-2 border-white rounded-2xl mb-4 w-4/5"
+                  />
+                  {movie && (
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                      <ImageIcon src="/images/play-icon.svg" size={64} />
+                    </div>
+                  )}
+                </div>
+                <Text className="text-center my-4 text-xl font-bold text-white">
+                  {movie.title}
+                </Text>
+                <Text className="font-thin text-gray-200 text-center">
+                  {movie.description}
+                </Text>
+              </div>
+              <Button
+                fullWidth
+                size="lg"
+                radius="xl"
+                className="fixed bottom-10 left-1/2 -translate-x-1/2 cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
+                style={{
+                  background:
+                    "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
+                  maxWidth: "calc(100% - 25px)",
+                }}
+                onClick={copyToClipBoard}
+              >
+                {t("continueWatching")}
+              </Button>
+            </Paper>
+          )}
+        </Container>
+      </div>
+    </>
+  );
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}

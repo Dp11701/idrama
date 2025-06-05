@@ -1,0 +1,37 @@
+image: node:20
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - install
+  - build
+  - deploy
+
+install_dependencies:
+  stage: install
+  script:
+    - npm ci
+
+build_app:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - .next
+      - public
+      - package.json
+      - next.config.js
+      - next-i18next.config.js
+      - tsconfig.json
+  only:
+    - develop
+
+start_app:
+  stage: deploy
+  script:
+    - npm run start
+  only:
+    - main  
