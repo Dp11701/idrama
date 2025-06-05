@@ -1,4 +1,7 @@
-image: node:20
+image: docker:latest
+
+services:
+  - docker:dind
 
 cache:
   paths:
@@ -29,10 +32,20 @@ build_app:
   only:
     - develop
 
-start_app:
+build_docker:
+  stage: build
+  script:
+    - docker build -t idrama-web:${CI_COMMIT_SHORT_SHA} .
+    # - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    # - docker tag idrama-web:${CI_COMMIT_SHORT_SHA} $CI_REGISTRY_IMAGE:idrama-web-${CI_COMMIT_SHORT_SHA}
+    # - docker push $CI_REGISTRY_IMAGE:idrama-web-${CI_COMMIT_SHORT_SHA}
+  only:
+    - develop
+
+deploy:
   stage: deploy
   script:
-    - npm run start
+    - docker run -d --name idrama-web -p 3000:3000 idrama-web:${CI_COMMIT_SHORT_SHA}
   only:
     - main
 
