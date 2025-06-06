@@ -158,6 +158,7 @@ export default function InstallPage() {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/images/idrama-icon.svg" />
+        <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
       </Head>
       <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         <Container size="sm" px="md" className="w-full relative z-20">
@@ -168,14 +169,20 @@ export default function InstallPage() {
           ) : isError || !movie ? (
             <Text className="text-white text-center">{t("noMovie")}</Text>
           ) : (
-            <Paper className="text-white bg-blue-500 w-full">
-              <div className="flex flex-col items-center px-4 pb-10">
+            <Paper className=" w-full">
+              <div className="flex flex-col items-center px-4 pb-10 gap-5">
                 <ImageIcon src="/images/idrama-icon.svg" size={100} />
-                <Text className="text-white text-2xl font-bold">iDrama</Text>
-                <Text className="text-[#575D61] font-medium"></Text>
-                <Text className="font-thin text-gray-200 text-center line-clamp-6 mt-20 text-lg">
-                  {movie.description}
+                <Text className="text-[#0D0D0E] text-2xl font-bold">
+                  iDrama
                 </Text>
+                <Text className="text-[#575D61] font-medium font-normal text-center">
+                  {t("clickToInstall")}
+                </Text>
+                <ImageIcon src="/images/arrow-down-icon.svg" size={32} />
+
+                <Image src="/images/appstore-logo-icon.svg" />
+
+                <Image src="/images/googlestore-logo-icon.svg" />
               </div>
             </Paper>
           )}

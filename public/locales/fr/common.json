@@ -2,5 +2,6 @@
   "welcome": "Bienvenue sur Next.js Multilanguage Starter!",
   "getStarted": "Commencer",
   "continueWatching": "Continuer à regarder",
-  "noMovie": "Aucun film trouvé ou une erreur s'est produite."
+  "noMovie": "Aucun film trouvé ou une erreur s'est produite.",
+  "clickToInstall": "Cliquez pour installer iDrama pour continuer à regarder des films géniaux"
 } 
