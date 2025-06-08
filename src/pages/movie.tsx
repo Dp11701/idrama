@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import Head from "next/head";
 import {
   Button,
@@ -12,7 +12,6 @@ import {
 } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "next-i18next";
 import ImageIcon from "@/components/common/Icon";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -85,7 +84,13 @@ function getFbPid() {
   return fbPid ? fbPid[2] : null;
 }
 
-export default function MoviePage() {
+export default function MoviePage({
+  movie,
+  isError,
+}: {
+  movie: any;
+  isError: boolean;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation("common");
@@ -121,16 +126,6 @@ export default function MoviePage() {
       window.removeEventListener("click", onClick);
     };
   }, [p0, handleDeeplink]);
-
-  const {
-    data: movie,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["movie", movieId, language],
-    queryFn: () => fetchMovie(movieId, language),
-    enabled: !!movieId && !!language,
-  });
 
   const copyToClipBoard = () => {
     const episodeIndex = searchParams.get("episode") || "";
@@ -211,12 +206,12 @@ export default function MoviePage() {
         )}
         <div className="absolute inset-0 bg-black/70 z-10" />
         <Container size="sm" px="md" className="w-full relative z-20">
-          {isLoading ? (
+          {isError ? (
+            <Text className="text-white text-center">{t("noMovie")}</Text>
+          ) : !movie ? (
             <Group justify="center" style={{ minHeight: "60vh" }}>
               <Loader color="orange" size="xl" />
             </Group>
-          ) : isError || !movie ? (
-            <Text className="text-white text-center">{t("noMovie")}</Text>
           ) : (
             <Paper className="text-white">
               {isMd ? (
@@ -314,10 +309,29 @@ export default function MoviePage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getServerSideProps({
+  query,
+  locale,
+}: {
+  query: any;
+  locale: string;
+}) {
+  const movieId = query.movie || "";
+  const language = query.language || locale || "en";
+  let movie = null;
+  let isError = false;
+  if (movieId && language) {
+    try {
+      movie = await fetchMovie(movieId, language);
+    } catch (e) {
+      isError = true;
+    }
+  }
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
+      movie,
+      isError,
     },
   };
 }
