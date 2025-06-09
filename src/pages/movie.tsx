@@ -118,15 +118,15 @@ export default function MoviePage({
     }
   }, [p0, p1, p2, p3, p4, p5, p6, fbclid]);
 
-  useEffect(() => {
-    if (!p0) return;
-    // listen click on all page
-    const onClick = () => handleDeeplink();
-    window.addEventListener("click", onClick);
-    return () => {
-      window.removeEventListener("click", onClick);
-    };
-  }, [p0, handleDeeplink]);
+  // useEffect(() => {
+  //   if (!p0) return;
+  //   // listen click on all page
+  //   const onClick = () => handleDeeplink();
+  //   window.addEventListener("click", onClick);
+  //   return () => {
+  //     window.removeEventListener("click", onClick);
+  //   };
+  // }, [p0, handleDeeplink]);
 
   const copyToClipBoard = () => {
     const episodeIndex = searchParams.get("episode") || "";
@@ -137,6 +137,8 @@ export default function MoviePage({
         language: language,
       })
     );
+    if (!p0) return;
+    handleDeeplink();
   };
 
   useEffect(() => {
