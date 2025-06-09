@@ -1,7 +1,8 @@
 {
   "welcome": "Bem-vindo ao Next.js Multilanguage Starter!",
   "getStarted": "Começar",
-  "continueWatching": "Continuar assistindo",
+  "continueWatching": "Continuar assistindo", 
   "noMovie": "Nenhum filme encontrado ou ocorreu um erro.",
-  "clickToInstall": "Clique para instalar iDrama para continuar assistindo filmes incríveis"
+  "clickToInstall": "Clique para instalar iDrama para continuar assistindo filmes incríveis",
+  "title":"Idrama AI vídeo curto"
 } 

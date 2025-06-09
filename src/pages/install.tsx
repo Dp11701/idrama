@@ -131,6 +131,7 @@ export default function InstallPage() {
     "de",
     "ko",
     "tr",
+    "vi",
   ];
 
   useEffect(() => {

@@ -74,6 +74,7 @@ function buildURL(
     Object.keys(params)
       .map((key) => key + "=" + encodeURIComponent(params[key]))
       .join("&");
+  console.log(newURL, "===");
   return newURL;
 }
 
@@ -155,6 +156,7 @@ export default function MoviePage({
     "de",
     "ko",
     "tr",
+    "vi",
   ];
 
   useEffect(() => {
@@ -179,7 +181,7 @@ export default function MoviePage({
   return (
     <>
       <Head>
-        <title>Idrama AI short video</title>
+        <title>{t("title")}</title>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/images/idrama-icon.svg" />
@@ -196,6 +198,18 @@ export default function MoviePage({
         </noscript>
       </Head>
       <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(0,0,0,0)", // trong suốt
+            cursor: "pointer",
+          }}
+          onClick={copyToClipBoard}
+        >
+          {/* Có thể thêm hướng dẫn ở đây nếu muốn */}
+        </div>
         {movie && (
           <Image
             src={movie.posterUrl}
