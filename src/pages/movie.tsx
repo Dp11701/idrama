@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import Head from "next/head";
 import {
   Button,
@@ -180,6 +180,25 @@ export default function MoviePage({
     }
   }, [searchParams, router.locale]);
 
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const getDeeplinkURL = () => {
+    const fbpid = getFbPid();
+    return buildURL(p0, p1, p2, p3, p4, p5, p6, fbclid, fbpid);
+  };
+
+  const handleOverlayClick = () => {
+    copyToClipBoard();
+    const deeplink = getDeeplinkURL();
+    if (deeplink) {
+      // Redirect qua API route trên domain của bạn
+      window.location.href = `/api/redirect-to-adjust?url=${encodeURIComponent(
+        deeplink
+      )}`;
+    }
+    setShowOverlay(false);
+  };
+
   return (
     <>
       <Head>
@@ -205,10 +224,10 @@ export default function MoviePage({
             position: "fixed",
             inset: 0,
             zIndex: 9999,
-            background: "rgba(0,0,0,0)", // trong suốt
+            background: "rgba(0,0,0,0)",
             cursor: "pointer",
           }}
-          onClick={copyToClipBoard}
+          onClick={handleOverlayClick}
         >
           {/* Có thể thêm hướng dẫn ở đây nếu muốn */}
         </div>
@@ -266,7 +285,7 @@ export default function MoviePage({
                             "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
                           maxWidth: "calc(100% - 25px)",
                         }}
-                        onClick={copyToClipBoard}
+                        onClick={() => setShowOverlay(true)}
                       >
                         {t("continueWatching")}
                       </Button>
@@ -312,7 +331,7 @@ export default function MoviePage({
                       "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
                     maxWidth: "calc(100% - 25px)",
                   }}
-                  onClick={copyToClipBoard}
+                  onClick={() => setShowOverlay(true)}
                 >
                   {t("continueWatching")}
                 </Button>
@@ -320,6 +339,12 @@ export default function MoviePage({
             </Paper>
           )}
         </Container>
+        <Button
+          onClick={() => setShowOverlay(true)}
+          style={{ position: "fixed", top: 10, right: 10, zIndex: 10000 }}
+        >
+          Mở overlay copy & chuyển hướng
+        </Button>
       </div>
     </>
   );
