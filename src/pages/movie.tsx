@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import Head from "next/head";
 import {
   Button,
@@ -20,7 +20,10 @@ import animClick from "@/assets/anim-click.json";
 import logo from "@/assets/idrama-icon.svg";
 import { useLottie } from "lottie-react";
 import Image from "next/image";
-
+import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from "firebase/app";
+import { logEvent } from "firebase/analytics";
+import type { Analytics } from "firebase/analytics";
 declare global {
   interface Window {
     fbq?: any;
@@ -28,7 +31,6 @@ declare global {
     buildURL?: any;
   }
 }
-
 // fetch movie
 const fetchMovie = async (movieId: string, languageCode: string) => {
   const res = await fetch(
@@ -45,49 +47,6 @@ const fetchMovie = async (movieId: string, languageCode: string) => {
   return result.data;
 };
 
-// build deeplink URL
-function buildURL(
-  p0: string | null,
-  p1: string | null,
-  p2: string | null,
-  p3: string | null,
-  p4: string | null,
-  p5: string | null,
-  p6: string | null,
-  fbclid: string | null,
-  fbpid: string | null
-) {
-  if (!p0) return null;
-  const tracker_token = p0;
-  const campaign = p1 || p2 ? `${p1 || ""}(${p2 || ""})` : "";
-  const adgroup = p3 || p4 ? `${p3 || ""}(${p4 || ""})` : "";
-  const creative = p5 || p6 ? `${p5 || ""}(${p6 || ""})` : "";
-  fbclid = fbclid || "";
-  fbpid = fbpid || "";
-  const params: Record<string, string> = {
-    campaign,
-    adgroup,
-    creative,
-    fbclid,
-    fbpid,
-  };
-  const newURL =
-    "https://app.adjust.com/" +
-    tracker_token +
-    "?" +
-    Object.keys(params)
-      .map((key) => key + "=" + encodeURIComponent(params[key]))
-      .join("&");
-  return newURL;
-}
-
-// get fbpid from cookie
-function getFbPid() {
-  if (typeof document === "undefined") return null;
-  const fbPid = document.cookie.match(/(^|;) ?_fbp=([^;]*)(;|$)/);
-  return fbPid ? fbPid[2] : null;
-}
-
 export default function MoviePage({
   movie,
   isError,
@@ -101,6 +60,78 @@ export default function MoviePage({
   const movieId = searchParams.get("movie") || "";
   const language = searchParams.get("language") || "en";
   const isMd = useMediaQuery("(min-width: 768px)");
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+
+  // firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAqEYAC1isVQRHf8q9LRwKxPARVsWvn9jE",
+    authDomain:
+      "tracking-event-server-adjust.firebaseapp.com-a1117.firebaseapp.com",
+    projectId: "tracking-event-server-adjust",
+    storageBucket: "tracking-event-server-adjust.firebasestorage.app",
+    messagingSenderId: "911004696184",
+    appId: "1:911004696184:web:62fe66a61f6154a044f78d",
+    measurementId: "G-2SVTXFTHQJ",
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Khởi tạo analytics
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    setAnalytics(analytics);
+  }, []);
+
+  // build deeplink URL
+  function buildURL(
+    p0: string | null,
+    p1: string | null,
+    p2: string | null,
+    p3: string | null,
+    p4: string | null,
+    p5: string | null,
+    p6: string | null,
+    fbclid: string | null,
+    fbpid: string | null
+  ) {
+    if (!p0) return null;
+    const tracker_token = p0;
+    const campaign = p1 || p2 ? `${p1 || ""}(${p2 || ""})` : "";
+    const adgroup = p3 || p4 ? `${p3 || ""}(${p4 || ""})` : "";
+    const creative = p5 || p6 ? `${p5 || ""}(${p6 || ""})` : "";
+    fbclid = fbclid || "";
+    fbpid = fbpid || "";
+    const params: Record<string, string> = {
+      campaign,
+      adgroup,
+      creative,
+      fbclid,
+      fbpid,
+    };
+
+    const newURL =
+      "https://app.adjust.com/" +
+      tracker_token +
+      "?" +
+      Object.keys(params)
+        .map((key) => key + "=" + encodeURIComponent(params[key]))
+        .join("&");
+    if (!analytics) return newURL;
+    logEvent(analytics, "link_click", {
+      link_url: newURL,
+      fbpid: fbpid,
+      fbcid: fbclid,
+    });
+    return newURL;
+  }
+
+  // get fbpid from cookie
+  function getFbPid() {
+    if (typeof document === "undefined") return null;
+    const fbPid = document.cookie.match(/(^|;) ?_fbp=([^;]*)(;|$)/);
+    return fbPid ? fbPid[2] : null;
+  }
 
   // get params of deeplink
   const p0 = searchParams.get("p0");
@@ -182,6 +213,29 @@ export default function MoviePage({
       );
     }
   }, [searchParams, router.locale]);
+
+  useEffect(() => {
+    if (!analytics) return;
+    // Lấy params từ URL
+
+    const userAgent = navigator.userAgent || navigator.vendor;
+    let platform = /iPad|iPhone|iPod/.test(userAgent) ? "ios" : "android";
+    setTimeout(() => {
+      logEvent(analytics, "access_page", {
+        movie_id: movieId,
+        episode: searchParams.get("episode"),
+        languageMovie: language,
+        platform: platform,
+      });
+      logEvent(analytics, "movie_info", {
+        movie_id: movieId,
+        episode: searchParams.get("episode"),
+        languageMovie: language,
+        platform: platform,
+      });
+    }, 300);
+  }, [analytics, movieId, language]);
+
   const defaultOptions = {
     animationData: animClick,
     loop: true,
