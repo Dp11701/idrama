@@ -189,8 +189,8 @@ export default function MoviePage({
   };
 
   const { View } = useLottie(defaultOptions, {
-    width: 120,
-    height: 120,
+    width: 200,
+    height: 200,
   });
 
   return (
@@ -336,11 +336,11 @@ export default function MoviePage({
                   }}
                   onClick={copyToClipBoard}
                 >
-                  <span className="relative w-full text-center">
+                  <span className="relative w-full text-center text-xl font-bold">
                     {t("continueWatching")}
                   </span>
                   <span
-                    className="absolute right-0 top-1/2 -translate-y-1/3"
+                    className="absolute right-[-40px] top-1/2 -translate-y-1/3"
                     style={{ pointerEvents: "none" }}
                   >
                     {View}
