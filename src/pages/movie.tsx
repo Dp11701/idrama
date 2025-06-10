@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import Head from "next/head";
 import {
   Button,
@@ -60,7 +60,7 @@ export default function MoviePage({
   const movieId = searchParams.get("movie") || "";
   const language = searchParams.get("language") || "en";
   const isMd = useMediaQuery("(min-width: 768px)");
-  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const analyticsRef = useRef<Analytics | null>(null);
 
   // firebase config
   const firebaseConfig = {
@@ -79,9 +79,9 @@ export default function MoviePage({
 
     // Khởi tạo analytics
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    setAnalytics(analytics);
+    analyticsRef.current = getAnalytics(app);
   }, []);
+  console.log(analyticsRef.current, "analytics");
 
   // build deeplink URL
   function buildURL(
@@ -117,8 +117,10 @@ export default function MoviePage({
       Object.keys(params)
         .map((key) => key + "=" + encodeURIComponent(params[key]))
         .join("&");
-    if (!analytics) return newURL;
-    logEvent(analytics, "link_click", {
+    console.log(analyticsRef.current, "analytics");
+    if (!analyticsRef.current) return newURL;
+    console.log("logEvent");
+    logEvent(analyticsRef.current, "link_click", {
       link_url: newURL,
       fbpid: fbpid,
       fbcid: fbclid,
@@ -215,26 +217,24 @@ export default function MoviePage({
   }, [searchParams, router.locale]);
 
   useEffect(() => {
-    if (!analytics) return;
+    if (!analyticsRef.current) return;
     // Lấy params từ URL
 
     const userAgent = navigator.userAgent || navigator.vendor;
     let platform = /iPad|iPhone|iPod/.test(userAgent) ? "ios" : "android";
-    setTimeout(() => {
-      logEvent(analytics, "access_page", {
-        movie_id: movieId,
-        episode: searchParams.get("episode"),
-        languageMovie: language,
-        platform: platform,
-      });
-      logEvent(analytics, "movie_info", {
-        movie_id: movieId,
-        episode: searchParams.get("episode"),
-        languageMovie: language,
-        platform: platform,
-      });
-    }, 300);
-  }, [analytics, movieId, language]);
+    logEvent(analyticsRef.current, "access_page", {
+      movie_id: movieId,
+      episode: searchParams.get("episode"),
+      languageMovie: language,
+      platform: platform,
+    });
+    logEvent(analyticsRef.current, "movie_info", {
+      movie_id: movieId,
+      episode: searchParams.get("episode"),
+      languageMovie: language,
+      platform: platform,
+    });
+  }, [analyticsRef.current, movieId, language]);
 
   const defaultOptions = {
     animationData: animClick,
