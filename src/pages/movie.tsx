@@ -340,7 +340,7 @@ export default function MoviePage({
                     {t("continueWatching")}
                   </span>
                   <span
-                    className="absolute right-[-40px] top-1/2 -translate-y-1/3"
+                    className="absolute right-[-10px] top-1/2 -translate-y-1/3"
                     style={{ pointerEvents: "none" }}
                   >
                     {View}
