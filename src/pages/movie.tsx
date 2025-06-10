@@ -6,9 +6,9 @@ import {
   Container,
   Paper,
   Group,
-  Image,
   Text,
   Loader,
+  Image as MantineImage,
 } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
@@ -16,6 +16,10 @@ import { useTranslation } from "next-i18next";
 import ImageIcon from "@/components/common/Icon";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMediaQuery } from "@mantine/hooks";
+import animClick from "@/assets/anim-click.json";
+import logo from "@/assets/idrama-icon.svg";
+import { useLottie } from "lottie-react";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -178,6 +182,13 @@ export default function MoviePage({
       );
     }
   }, [searchParams, router.locale]);
+  const defaultOptions = {
+    animationData: animClick,
+    loop: true,
+    autoplay: true,
+  };
+
+  const { View } = useLottie(defaultOptions, {});
 
   return (
     <>
@@ -212,7 +223,7 @@ export default function MoviePage({
           {/* Có thể thêm hướng dẫn ở đây nếu muốn */}
         </div>
         {movie && (
-          <Image
+          <MantineImage
             src={movie.posterUrl}
             alt="poster-bg"
             className="absolute inset-0 w-full h-full object-cover blur-lg scale-110 z-0"
@@ -239,7 +250,7 @@ export default function MoviePage({
                   </div>
                   <div className="flex flex-row gap-4 items-center justify-center">
                     <div className="relative flex items-center justify-center">
-                      <Image
+                      <MantineImage
                         src={movie.posterUrl}
                         alt="poster"
                         className="md:w-2/3 border-2 border-white rounded-2xl mb-4 max-w-[30vw]"
@@ -275,13 +286,13 @@ export default function MoviePage({
               ) : (
                 <div className="flex flex-col items-center px-4 pb-28">
                   <div className="flex flex-row gap-2 py-5">
-                    <ImageIcon src="/images/idrama-icon.svg" size={36} />
+                    <Image src={logo} alt="logo" width={36} height={36} />
                     <Text className="text-white text-2xl font-bold">
                       iDrama
                     </Text>
                   </div>
                   <div className="relative flex items-center justify-center">
-                    <Image
+                    <MantineImage
                       src={movie.posterUrl}
                       alt="poster"
                       className="md:w-2/3 border-2 border-white rounded-2xl mb-4 w-4/5 "
@@ -314,6 +325,7 @@ export default function MoviePage({
                   onClick={copyToClipBoard}
                 >
                   {t("continueWatching")}
+                  {/* {View} */}
                 </Button>
               )}
             </Paper>
