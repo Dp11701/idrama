@@ -74,7 +74,6 @@ function buildURL(
     Object.keys(params)
       .map((key) => key + "=" + encodeURIComponent(params[key]))
       .join("&");
-  console.log(newURL, "===");
   return newURL;
 }
 
