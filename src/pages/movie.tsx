@@ -188,7 +188,10 @@ export default function MoviePage({
     autoplay: true,
   };
 
-  const { View } = useLottie(defaultOptions, {});
+  const { View } = useLottie(defaultOptions, {
+    width: 120,
+    height: 120,
+  });
 
   return (
     <>
@@ -278,7 +281,15 @@ export default function MoviePage({
                         }}
                         onClick={copyToClipBoard}
                       >
-                        {t("continueWatching")}
+                        <span className="relative w-full text-center">
+                          {t("continueWatching")}
+                        </span>
+                        <span
+                          className="absolute right-0 top-1/2 -translate-y-1/3"
+                          style={{ pointerEvents: "none" }}
+                        >
+                          {View}
+                        </span>
                       </Button>
                     </div>
                   </div>
@@ -316,16 +327,24 @@ export default function MoviePage({
                   fullWidth
                   size="lg"
                   radius="xl"
-                  className="fixed bottom-10 left-1/2 -translate-x-1/2 cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
+                  className="fixed flex items-center justify-center bottom-10 left-1/2 -translate-x-1/2 cta-button AdjustTracker text-white p-4 rounded-full w-full z-50"
                   style={{
                     background:
                       "linear-gradient(90deg, #fb3c38 0%, #f66f1b 100%)",
                     maxWidth: "calc(100% - 25px)",
+                    overflow: "visible",
                   }}
                   onClick={copyToClipBoard}
                 >
-                  {t("continueWatching")}
-                  {/* {View} */}
+                  <span className="relative w-full text-center">
+                    {t("continueWatching")}
+                  </span>
+                  <span
+                    className="absolute right-0 top-1/2 -translate-y-1/3"
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {View}
+                  </span>
                 </Button>
               )}
             </Paper>
