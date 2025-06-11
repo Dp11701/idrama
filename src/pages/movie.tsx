@@ -235,6 +235,16 @@ export default function MoviePage({
     });
   }, [analyticsRef.current, movieId, language]);
 
+  // useEffect(() => {
+  //   if (typeof window !== "undefined" && window.fbq) {
+  //     const params = new URLSearchParams(window.location.search);
+  //     const movieId = params.get("movie");
+  //     if (movieId) {
+  //       window.fbq("trackCustom", "ViewMovie", { movieId });
+  //     }
+  //   }
+  // }, [movieId]);
+
   const defaultOptions = {
     animationData: animClick,
     loop: true,
@@ -254,13 +264,43 @@ export default function MoviePage({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/images/idrama-icon.svg" />
         <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+        {/* Facebook Pixel */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              !(function(f,b,e,v,n,t,s){
+                if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)
+              })(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+              fbq('init', '1353122409468442');
+              fbq('track', 'PageView');
+              console.log(fbq, "fbq");
+              window.addEventListener('load', function() {
+                var search = window.location.search;
+                var movieId = null;
+                if (search) {
+                  var params = new URLSearchParams(search);
+                  movieId = params.get('movie');
+                }
+                if (movieId) {
+                  fbq('trackCustom', 'ViewMovie', { movieId: movieId });
+                }
+              });
+            `,
+          }}
+        />
         {/* Meta Pixel noscript */}
         <noscript>
           <img
             height="1"
             width="1"
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=645333511354667&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=1353122409468442&ev=PageView&noscript=1"
             alt="fb-pixel"
           />
         </noscript>
