@@ -65,13 +65,12 @@ export default function MoviePage({
   // firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyAqEYAC1isVQRHf8q9LRwKxPARVsWvn9jE",
-    authDomain:
-      "tracking-event-server-adjust.firebaseapp.com-a1117.firebaseapp.com",
+    authDomain: "tracking-event-server-adjust.firebaseapp.com",
     projectId: "tracking-event-server-adjust",
     storageBucket: "tracking-event-server-adjust.firebasestorage.app",
     messagingSenderId: "911004696184",
-    appId: "1:911004696184:web:62fe66a61f6154a044f78d",
-    measurementId: "G-2SVTXFTHQJ",
+    appId: "1:911004696184:web:718e5eb907ea877c44f78d",
+    measurementId: "G-79HK0D6V8X",
   };
 
   useEffect(() => {
