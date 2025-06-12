@@ -118,17 +118,15 @@ export default function MoviePage({
         .join("&");
     console.log(analyticsRef.current, "analytics");
     if (!analyticsRef.current) return newURL;
-    console.log("logEvent");
-    // logEvent(analyticsRef.current, "link_click", {
-    //   link_url: newURL,
-    //   fbpid: fbpid,
-    //   fbcid: fbclid,
-    // });
-    window.fbq("trackCustom", "ViewMovieTest", {
-      link_url: newURL,
-      fbpid: fbpid,
-      fbcid: fbclid,
-    });
+
+    if (typeof window !== "undefined" && window.fbq) {
+      console.log("logEvent");
+      window.fbq("trackCustom", "ClickMovie", {
+        link_url: newURL,
+        fbpid: fbpid,
+        fbcid: fbclid,
+      });
+    }
     return newURL;
   }
 
@@ -275,6 +273,8 @@ export default function MoviePage({
             __html: `
               const urlParams = new URLSearchParams(window.location.search);
       let movieId = urlParams.get("movie");
+      let language = urlParams.get("language");
+      let episode = urlParams.get("episode");
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
         n = f.fbq = function () {
@@ -298,10 +298,15 @@ export default function MoviePage({
         "script",
         "https://connect.facebook.net/en_US/fbevents.js"
       );
+      const userAgent = navigator.userAgent || navigator.vendor;
+    let platform = /iPad|iPhone|iPod/.test(userAgent) ? "ios" : "android";
       fbq("init", "1353122409468442");
       fbq("track", "PageView");
       fbq("trackCustom", "ViewMovie", {
         movie_id: movieId,
+        language: language,
+        platform: platform,
+        episode: episode,
       });
             `,
           }}
