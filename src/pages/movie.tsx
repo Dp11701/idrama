@@ -273,29 +273,36 @@ export default function MoviePage({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              !(function(f,b,e,v,n,t,s){
-                if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)
-              })(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-
-              fbq('init', '1353122409468442');
-              fbq('track', 'PageView');
-              (function() {
-                var search = window.location.search;
-                var movieId = null;
-                if (search) {
-                  var params = new URLSearchParams(search);
-                  movieId = params.get('movie');
-                }
-                if (movieId) {
-                console.log("da logggg")
-                  fbq('trackCustom', 'ViewMovieTest', { movie_id: movieId });
-                }
-              })();
+              const urlParams = new URLSearchParams(window.location.search);
+      let movieId = urlParams.get("movie");
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+      fbq("init", "1353122409468442");
+      fbq("track", "PageView");
+      fbq("trackCustom", "ViewMovie", {
+        movie_id: movieId,
+      });
             `,
           }}
         />
