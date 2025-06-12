@@ -119,7 +119,12 @@ export default function MoviePage({
     console.log(analyticsRef.current, "analytics");
     if (!analyticsRef.current) return newURL;
     console.log("logEvent");
-    logEvent(analyticsRef.current, "link_click", {
+    // logEvent(analyticsRef.current, "link_click", {
+    //   link_url: newURL,
+    //   fbpid: fbpid,
+    //   fbcid: fbclid,
+    // });
+    window.fbq("trackCustom", "ViewMovieTest", {
       link_url: newURL,
       fbpid: fbpid,
       fbcid: fbclid,
@@ -279,8 +284,7 @@ export default function MoviePage({
 
               fbq('init', '1353122409468442');
               fbq('track', 'PageView');
-              console.log(fbq, "fbq");
-              window.addEventListener('load', function() {
+              (function() {
                 var search = window.location.search;
                 var movieId = null;
                 if (search) {
@@ -288,9 +292,10 @@ export default function MoviePage({
                   movieId = params.get('movie');
                 }
                 if (movieId) {
-                  fbq('trackCustom', 'ViewMovieTest', { movieId: "62" });
+                console.log("da logggg")
+                  fbq('trackCustom', 'ViewMovieTest', { movie_id: movieId });
                 }
-              });
+              })();
             `,
           }}
         />
