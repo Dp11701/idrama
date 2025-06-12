@@ -288,7 +288,7 @@ export default function MoviePage({
                   movieId = params.get('movie');
                 }
                 if (movieId) {
-                  fbq('trackCustom', 'ViewMovie', { movieId: movieId });
+                  fbq('trackCustom', 'ViewMovieTest', { movieId: "62" });
                 }
               });
             `,
