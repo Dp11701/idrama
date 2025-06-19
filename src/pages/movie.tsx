@@ -17,7 +17,7 @@ import ImageIcon from "@/components/common/Icon";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMediaQuery } from "@mantine/hooks";
 import animClick from "@/assets/anim-click.json";
-import logo from "@/assets/idrama-icon.svg";
+import logo from "@/assets/idrama-icon.png";
 import { useLottie } from "lottie-react";
 import Image from "next/image";
 import { getAnalytics } from "firebase/analytics";
@@ -262,10 +262,10 @@ export default function MoviePage({
   return (
     <>
       <Head>
-        <title>{t("title")}</title>
+        <title>DramaShort: Movies & Reels</title>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/images/idrama-icon.svg" />
+        <link rel="icon" href="/images/idrama-icon.png" />
         <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
         {/* Facebook Pixel */}
         <script
@@ -356,9 +356,13 @@ export default function MoviePage({
               {isMd ? (
                 <div className="flex flex-col items-center px-4 pb-10">
                   <div className="flex flex-row gap-2 py-5 mb-10">
-                    <ImageIcon src="/images/idrama-icon.svg" size={36} />
+                    <ImageIcon
+                      src="/images/idrama-icon.png"
+                      size={36}
+                      className="rounded-[10px]"
+                    />
                     <Text className="text-white text-2xl font-bold">
-                      iDrama AI Short Videos
+                      DramaShort: Movies & Reels
                     </Text>
                   </div>
                   <div className="flex flex-row gap-4 items-center justify-center">
@@ -407,9 +411,15 @@ export default function MoviePage({
               ) : (
                 <div className="flex flex-col items-center px-4 pb-28">
                   <div className="flex flex-row gap-2 py-5">
-                    <Image src={logo} alt="logo" width={36} height={36} />
+                    <Image
+                      src={logo}
+                      alt="logo"
+                      width={36}
+                      height={36}
+                      className="rounded-[10px]"
+                    />
                     <Text className="text-white text-2xl font-bold">
-                      iDrama
+                      DramaShort: Movies & Reels
                     </Text>
                   </div>
                   <div className="relative flex items-center justify-center">
