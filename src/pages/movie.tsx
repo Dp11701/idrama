@@ -372,11 +372,11 @@ export default function MoviePage({
                         alt="poster"
                         className="md:w-2/3 border-2 border-white rounded-2xl mb-4 max-w-[30vw]"
                       />
-                      {/* {movie && (
+                      {movie && (
                         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                           <ImageIcon src="/images/play-icon.svg" size={64} />
                         </div>
-                      )} */}
+                      )}
                     </div>
                     <div className="flex flex-col items-start justify-center w-[35%] gap-6 text-left">
                       <Text className="text-left my-4 text-xl font-bold text-white">
@@ -428,11 +428,11 @@ export default function MoviePage({
                       alt="poster"
                       className="md:w-2/3 border-2 border-white rounded-2xl mb-4 w-4/5 "
                     />
-                    {/* {movie && (
+                    {movie && (
                       <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                         <ImageIcon src="/images/play-icon.svg" size={64} />
                       </div>
-                    )} */}
+                    )}
                   </div>
                   <Text className="text-center my-4 text-xl font-bold text-white">
                     {movie.title}
