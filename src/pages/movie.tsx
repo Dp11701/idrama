@@ -410,7 +410,7 @@ export default function MoviePage({
                 </div>
               ) : (
                 <div className="flex flex-col items-center px-4 pb-28">
-                  <div className="flex flex-row gap-2 py-5">
+                  <div className="flex flex-row gap-2 py-5 items-center">
                     <Image
                       src={logo}
                       alt="logo"
@@ -418,7 +418,7 @@ export default function MoviePage({
                       height={36}
                       className="rounded-[10px]"
                     />
-                    <Text className="text-white text-2xl font-bold">
+                    <Text className="text-white text-xl font-bold sm:text-xl">
                       DramaShort: Movies & Reels
                     </Text>
                   </div>
