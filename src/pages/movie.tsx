@@ -147,6 +147,19 @@ export default function MoviePage({
   const p6 = searchParams.get("p6");
   const fbclid = searchParams.get("fbclid");
 
+  // Impression URL Adjust
+  const impressionUrl = p0
+    ? `https://view.adjust.com/impression/${p0}?campaign=${encodeURIComponent(
+        p1 || ""
+      )}(${encodeURIComponent(p2 || "")})&adgroup=${encodeURIComponent(
+        p3 || ""
+      )}(${encodeURIComponent(p4 || "")})&creative=${encodeURIComponent(
+        p5 || ""
+      )}(${encodeURIComponent(p6 || "")})`
+    : null;
+
+  console.log(impressionUrl, "impressionUrl");
+
   // Handler deeplink click
   const handleDeeplink = useCallback(() => {
     const fbpid = getFbPid();
@@ -261,6 +274,14 @@ export default function MoviePage({
 
   return (
     <>
+      {/* Adjust Impression Pixel */}
+      {impressionUrl && (
+        <img
+          src={impressionUrl}
+          alt="adjust-impression"
+          style={{ width: 0, height: 0, opacity: 0, position: "absolute" }}
+        />
+      )}
       <Head>
         <title>DramaShort: Movies & Reels</title>
         <meta charSet="UTF-8" />
