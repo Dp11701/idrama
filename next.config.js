@@ -4,7 +4,15 @@ const { i18n } = require('./next-i18next.config.js');
 const nextConfig = {
   i18n,
   reactStrictMode: true,
-  output: "standalone"
+  output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/assetlinks.json',
+        destination: '/api/.well-known/assetlinks.json'
+      }
+    ];
+  }
 };
 
 module.exports = nextConfig; 
