@@ -122,13 +122,9 @@ export default function MoviePage({
         .map((key) => key + "=" + encodeURIComponent(params[key]))
         .join("&") +
       `&redirect=${encodeURIComponent(redirectUrl)}`;
-    console.log(analyticsRef.current, "analytics");
-    console.log(newURL, "newURL");
-    debugger;
     if (!analyticsRef.current) return newURL;
 
     if (typeof window !== "undefined" && window.fbq) {
-      console.log("newURL", newURL);
       window.fbq("trackCustom", "ClickMovie", {
         link_url: newURL,
         fbpid: fbpid,
