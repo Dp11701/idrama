@@ -92,13 +92,18 @@ export default function MoviePage({
     p5: string | null,
     p6: string | null,
     fbclid: string | null,
-    fbpid: string | null
+    fbpid: string | null,
+    redirect: string,
+    listing: string
   ) {
     if (!p0) return null;
     const tracker_token = p0;
     const campaign = p1 || p2 ? `${p1 || ""}(${p2 || ""})` : "";
     const adgroup = p3 || p4 ? `${p3 || ""}(${p4 || ""})` : "";
     const creative = p5 || p6 ? `${p5 || ""}(${p6 || ""})` : "";
+    const redirectUrl = `https://play.google.com/${redirect}&listing=${listing}`;
+    console.log(redirectUrl, "redirectUrl");
+
     fbclid = fbclid || "";
     fbpid = fbpid || "";
     const params: Record<string, string> = {
@@ -115,12 +120,15 @@ export default function MoviePage({
       "?" +
       Object.keys(params)
         .map((key) => key + "=" + encodeURIComponent(params[key]))
-        .join("&");
+        .join("&") +
+      `&redirect=${encodeURIComponent(redirectUrl)}`;
     console.log(analyticsRef.current, "analytics");
+    console.log(newURL, "newURL");
+    debugger;
     if (!analyticsRef.current) return newURL;
 
     if (typeof window !== "undefined" && window.fbq) {
-      console.log("logEvent");
+      console.log("newURL", newURL);
       window.fbq("trackCustom", "ClickMovie", {
         link_url: newURL,
         fbpid: fbpid,
@@ -146,7 +154,8 @@ export default function MoviePage({
   const p5 = searchParams.get("p5");
   const p6 = searchParams.get("p6");
   const fbclid = searchParams.get("fbclid");
-
+  const redirect = searchParams.get("redirect");
+  const listing = searchParams.get("listing");
   // Impression URL Adjust
   const impressionUrl = p0
     ? `https://view.adjust.com/impression/${p0}?campaign=${encodeURIComponent(
@@ -155,7 +164,9 @@ export default function MoviePage({
         p3 || ""
       )}(${encodeURIComponent(p4 || "")})&creative=${encodeURIComponent(
         p5 || ""
-      )}(${encodeURIComponent(p6 || "")})`
+      )}(${encodeURIComponent(p6 || "")})&redirect=${encodeURIComponent(
+        redirect || ""
+      )}&listing=${listing}`
     : null;
 
   console.log(impressionUrl, "impressionUrl");
@@ -163,11 +174,23 @@ export default function MoviePage({
   // Handler deeplink click
   const handleDeeplink = useCallback(() => {
     const fbpid = getFbPid();
-    const deeplink = buildURL(p0, p1, p2, p3, p4, p5, p6, fbclid, fbpid);
+    const deeplink = buildURL(
+      p0,
+      p1,
+      p2,
+      p3,
+      p4,
+      p5,
+      p6,
+      fbclid,
+      fbpid,
+      redirect || "",
+      listing || ""
+    );
     if (deeplink) {
       window.location.href = deeplink;
     }
-  }, [p0, p1, p2, p3, p4, p5, p6, fbclid]);
+  }, [p0, p1, p2, p3, p4, p5, p6, fbclid, redirect]);
 
   // useEffect(() => {
   //   if (!p0) return;
