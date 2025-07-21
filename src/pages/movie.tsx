@@ -114,14 +114,17 @@ export default function MoviePage({
       fbpid,
     };
 
-    const newURL =
+    const baseURL =
       "https://app.adjust.com/" +
       tracker_token +
       "?" +
       Object.keys(params)
         .map((key) => key + "=" + encodeURIComponent(params[key]))
-        .join("&") +
-      `&redirect=${encodeURIComponent(redirectUrl)}`;
+        .join("&");
+
+    const newURL = redirect
+      ? `${baseURL}&redirect=${encodeURIComponent(redirectUrl)}`
+      : baseURL;
     if (!analyticsRef.current) return newURL;
 
     if (typeof window !== "undefined" && window.fbq) {
@@ -133,6 +136,15 @@ export default function MoviePage({
     }
     return newURL;
   }
+
+  const buildDeeplink = (
+    movieId: string,
+    episode: string,
+    language: string,
+    timestamp: string
+  ) => {
+    return `idrama://remarketing?movie_id=${movieId}&episode=${episode}&language=${language}&timestamp=${timestamp}`;
+  };
 
   // get fbpid from cookie
   function getFbPid() {
@@ -170,7 +182,7 @@ export default function MoviePage({
   // Handler deeplink click
   const handleDeeplink = useCallback(() => {
     const fbpid = getFbPid();
-    const deeplink = buildURL(
+    const linkAdjust = buildURL(
       p0,
       p1,
       p2,
@@ -183,9 +195,29 @@ export default function MoviePage({
       redirect || "",
       listing || ""
     );
+    const deeplink = buildDeeplink(
+      movieId,
+      searchParams.get("episode") || "",
+      language,
+      "225"
+    );
+    // try deeplink
+    const timeout = setTimeout(() => {
+      if (linkAdjust) {
+        window.location.href = linkAdjust;
+      }
+    }, 1500);
+    console.log("timeout");
+
+    // try linkAdjust
+
     if (deeplink) {
       window.location.href = deeplink;
     }
+    // if user blur the page (app open successfully), clear timeout
+    window.addEventListener("blur", () => clearTimeout(timeout), {
+      once: true,
+    });
   }, [p0, p1, p2, p3, p4, p5, p6, fbclid, redirect]);
 
   // useEffect(() => {
