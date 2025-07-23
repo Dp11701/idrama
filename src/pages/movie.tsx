@@ -201,24 +201,52 @@ export default function MoviePage({
       language,
       "225"
     );
-    // try deeplink
-    const timeout = setTimeout(() => {
-      if (linkAdjust) {
-        window.location.href = linkAdjust;
-      }
-    }, 1500);
-    console.log("timeout");
 
-    // try linkAdjust
+    // Detect platform
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    if (deeplink) {
+    let timeout: number | undefined;
+    if (isAndroid) {
+      // Use iframe for Android
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = deeplink;
+      document.body.appendChild(iframe);
+
+      timeout = window.setTimeout(() => {
+        document.body.removeChild(iframe);
+        if (linkAdjust) window.location.href = linkAdjust;
+      }, 900);
+    } else if (isIOS) {
+      // iOS: use window.location but short timeout
       window.location.href = deeplink;
+      timeout = window.setTimeout(() => {
+        if (linkAdjust) window.location.href = linkAdjust;
+      }, 100);
+    } else {
+      // Desktop or other platform: only open store
+      if (linkAdjust) window.location.href = linkAdjust;
     }
-    // if user blur the page (app open successfully), clear timeout
-    window.addEventListener("blur", () => clearTimeout(timeout), {
+
+    // if user blur (app open successfully), clear timeout
+    window.addEventListener("blur", () => timeout && clearTimeout(timeout), {
       once: true,
     });
-  }, [p0, p1, p2, p3, p4, p5, p6, fbclid, redirect]);
+  }, [
+    p0,
+    p1,
+    p2,
+    p3,
+    p4,
+    p5,
+    p6,
+    fbclid,
+    redirect,
+    listing,
+    movieId,
+    language,
+  ]);
 
   // useEffect(() => {
   //   if (!p0) return;
