@@ -217,7 +217,7 @@ export default function MoviePage({
       timeout = window.setTimeout(() => {
         document.body.removeChild(iframe);
         if (linkAdjust) window.location.href = linkAdjust;
-      }, 900);
+      }, 100);
     } else if (isIOS) {
       // iOS: use window.location but short timeout
       window.location.href = deeplink;
