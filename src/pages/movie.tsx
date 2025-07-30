@@ -113,8 +113,6 @@ export default function MoviePage({
       creative,
       fbclid,
       fbpid,
-      fbp,
-      fbc,
     };
 
     const baseURL =
