@@ -106,12 +106,15 @@ export default function MoviePage({
 
     fbclid = fbclid || "";
     fbpid = fbpid || "";
+
     const params: Record<string, string> = {
       campaign,
       adgroup,
       creative,
       fbclid,
       fbpid,
+      fbp,
+      fbc,
     };
 
     const baseURL =
@@ -372,6 +375,12 @@ export default function MoviePage({
           dangerouslySetInnerHTML={{
             __html: `
               const urlParams = new URLSearchParams(window.location.search);
+               function getCookieValue(name) {
+        var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? match[2] : null;
+      }
+      const fbp = getCookieValue('_fbp');
+      const fbc = getCookieValue('_fbc');
       let movieId = urlParams.get("movie");
       let language = urlParams.get("language");
       let episode = urlParams.get("episode");
@@ -400,8 +409,15 @@ export default function MoviePage({
       );
       const userAgent = navigator.userAgent || navigator.vendor;
     let platform = /iPad|iPhone|iPod/.test(userAgent) ? "ios" : "android";
+
       fbq("init", "1353122409468442");
+
+            
       fbq("track", "PageView");
+      fbq("track", "CompleteRegistration", {
+          fbp: fbp,
+          fbc: fbc,
+        });
       fbq("trackCustom", "ViewMovie", {
         movie_id: movieId,
         language: language,
