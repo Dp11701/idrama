@@ -412,10 +412,7 @@ export default function MoviePage({
 
             
       fbq("track", "PageView");
-      fbq("track", "CompleteRegistration", {
-          fbp: fbp,
-          fbc: fbc,
-        });
+
       fbq("trackCustom", "ViewMovie", {
         movie_id: movieId,
         language: language,
