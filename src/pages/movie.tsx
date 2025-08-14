@@ -207,15 +207,6 @@ export default function MoviePage({
     const isAndroid = /android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    useEffect(() => {
-      if (isAndroid) {
-        console.log("isAndroid");
-      }
-      if (isIOS) {
-        console.log("isIOS");
-      }
-    }, [isAndroid, deeplink]);
-
     let timeout: number | undefined;
     if (isAndroid) {
       // Use iframe for Android
