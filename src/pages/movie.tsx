@@ -207,6 +207,15 @@ export default function MoviePage({
     const isAndroid = /android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+    useEffect(() => {
+      if (isAndroid) {
+        console.log("isAndroid");
+      }
+      if (isIOS) {
+        console.log("isIOS");
+      }
+    }, [isAndroid, deeplink]);
+
     let timeout: number | undefined;
     if (isAndroid) {
       // Use iframe for Android
@@ -220,11 +229,12 @@ export default function MoviePage({
         if (linkAdjust) window.location.href = linkAdjust;
       }, 100);
     } else if (isIOS) {
-      // iOS: use window.location but short timeout
-      window.location.href = deeplink;
-      timeout = window.setTimeout(() => {
-        if (linkAdjust) window.location.href = linkAdjust;
-      }, 100);
+      //   // iOS: use window.location but short timeout
+      //   window.location.href = deeplink;
+      //   timeout = window.setTimeout(() => {
+      //     if (linkAdjust) window.location.href = linkAdjust;
+      //   }, 100);
+      if (linkAdjust) window.location.href = linkAdjust;
     } else {
       // Desktop or other platform: only open store
       if (linkAdjust) window.location.href = linkAdjust;
