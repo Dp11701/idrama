@@ -97,9 +97,9 @@ export default function MoviePage({
     listing: string
   ) {
     if (!p0) return null;
-    // const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    // const tracker_token = isIOS ? "1mpmm442" : "1m669c0c";
-    const tracker_token = p0;
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const tracker_token = isIOS ? "1mpmm442" : "1m669c0c";
+    // const tracker_token = p0;
     const campaign = p1 || p2 ? `${p1 || ""}(${p2 || ""})` : "";
     const adgroup = p3 || p4 ? `${p3 || ""}(${p4 || ""})` : "";
     const creative = p5 || p6 ? `${p5 || ""}(${p6 || ""})` : "";
