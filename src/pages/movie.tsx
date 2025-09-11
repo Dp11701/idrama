@@ -366,7 +366,7 @@ export default function MoviePage({
         />
       )}
       <Head>
-        <title>DramaShort: Movies & Reels</title>
+        <title>DramaOn: Stream Movies & Reels</title>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/images/idrama-icon.png" />
@@ -476,7 +476,7 @@ export default function MoviePage({
                       className="rounded-[10px]"
                     />
                     <Text className="text-white text-2xl font-bold">
-                      DramaShort: Movies & Reels
+                      DramaOn: Stream Movies & Reels
                     </Text>
                   </div>
                   <div className="flex flex-row gap-4 items-center justify-center">
@@ -533,7 +533,7 @@ export default function MoviePage({
                       className="rounded-[10px]"
                     />
                     <Text className="text-white text-xl font-bold sm:text-xl">
-                      DramaShort: Movies & Reels
+                      DramaOn: Stream Movies & Reels
                     </Text>
                   </div>
                   <div className="relative flex items-center justify-center">
