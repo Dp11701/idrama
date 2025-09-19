@@ -96,7 +96,7 @@ export default function MoviePage({
     redirect: string,
     listing: string
   ) {
-    if (!p0) return null;
+    // if (!p0) return null;
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const tracker_token = isIOS ? "1mpmm442" : "1m669c0c";
     // const tracker_token = p0;
@@ -166,18 +166,19 @@ export default function MoviePage({
   const fbclid = searchParams.get("fbclid");
   const redirect = searchParams.get("redirect");
   const listing = searchParams.get("listing");
+
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const tracker_token = isIOS ? "1mpmm442" : "1m669c0c";
   // Impression URL Adjust
-  const impressionUrl = p0
-    ? `https://view.adjust.com/impression/${p0}?campaign=${encodeURIComponent(
-        p1 || ""
-      )}(${encodeURIComponent(p2 || "")})&adgroup=${encodeURIComponent(
-        p3 || ""
-      )}(${encodeURIComponent(p4 || "")})&creative=${encodeURIComponent(
-        p5 || ""
-      )}(${encodeURIComponent(p6 || "")})&redirect=${encodeURIComponent(
-        redirect || ""
-      )}&listing=${listing}`
-    : null;
+  const impressionUrl = `https://view.adjust.com/impression/${tracker_token}?campaign=${encodeURIComponent(
+    p1 || ""
+  )}(${encodeURIComponent(p2 || "")})&adgroup=${encodeURIComponent(
+    p3 || ""
+  )}(${encodeURIComponent(p4 || "")})&creative=${encodeURIComponent(
+    p5 || ""
+  )}(${encodeURIComponent(p6 || "")})&redirect=${encodeURIComponent(
+    redirect || ""
+  )}&listing=${listing}`;
 
   console.log(impressionUrl, "impressionUrl");
 
@@ -185,7 +186,7 @@ export default function MoviePage({
   const handleDeeplink = useCallback(() => {
     const fbpid = getFbPid();
     const linkAdjust = buildURL(
-      p0,
+      tracker_token,
       p1,
       p2,
       p3,
@@ -238,7 +239,7 @@ export default function MoviePage({
       once: true,
     });
   }, [
-    p0,
+    tracker_token,
     p1,
     p2,
     p3,
@@ -271,7 +272,7 @@ export default function MoviePage({
         language: language,
       })
     );
-    if (!p0) return;
+    // if (!p0) return;
     handleDeeplink();
   };
 
