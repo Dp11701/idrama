@@ -13,9 +13,6 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
         },
       ],
     },
-    webcredentials: {
-      apps: ["C35729FR53.com.begamob.shortDrama"],
-    },
   };
 
   res.setHeader("Content-Type", "application/json");
