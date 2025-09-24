@@ -11,10 +11,7 @@ const nextConfig = {
         source: '/.well-known/assetlinks.json',
         destination: '/api/.well-known/assetlinks.json'
       },
-      {
-        source: '/apple-app-site-association.json',
-        destination: '/api/apple-app-site-association.json'
-      }
+
     ];
   }
 };
